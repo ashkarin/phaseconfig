@@ -23,7 +23,7 @@ def run_analyze(args):
     phase.analyze(args)
 
 
-def run_psd():
+def run_psd(args):
     from phaseconfig import phase
     phase.compute_phase_spectrum_density(args)
 
@@ -42,9 +42,9 @@ def main():
     parser.add_argument('--version', action='version',
                         version='%(prog)s {}'.format(__version__))
 
-    analyze_params = ('retrieve-phase')
-    psd_params = ('power-spectral-density')
-    gui_params = ('retrieve-phase', 'power-spectral-density')
+    analyze_params = ('analyze', )
+    psd_params = ('power-spectral-density', )
+    gui_params = ('analyze', 'power-spectral-density')
 
     cmd_parsers = [
         ('analyze', run_analyze, analyze_params, "Analzse the phase retrieval filter"),

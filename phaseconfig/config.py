@@ -1,7 +1,7 @@
 import sys
 import argparse
 import logging
-import ConfigParser as configparse
+import ConfigParser as configparser
 from collections import OrderedDict
 
 from phaseconfig.util import positive_int
@@ -16,11 +16,6 @@ SECTIONS['general'] = {
         'type': str,
         'help': "File name of configuration",
         'metavar': 'FILE'},
-    'output': {
-        'default': 'profiles.png',
-        'type': str,
-        'help': "A format-specified file path to save the comparative plot",
-        'metavar': 'PATH'},
     'verbose': {
         'default': False,
         'help': 'Verbose output',
@@ -29,7 +24,12 @@ SECTIONS['general'] = {
         'default': None,
         'type': str,
         'help': "Filename of optional log",
-        'metavar': 'FILE'}
+        'metavar': 'FILE'},
+    'output': {
+        'default': None,
+        'type': str,
+        'help': "A format-specified file path to store the result.",
+        'metavar': 'PATH'}
 }
 
 SECTIONS['reading'] = {
@@ -41,6 +41,10 @@ SECTIONS['reading'] = {
         'default': None,
         'type': positive_int,
         'help': "Number of rows which will be read"},
+    'width': {
+        'default': None,
+        'type': positive_int,
+        'help': "Input width"},
     'bitdepth': {
         'default': 32,
         'type': positive_int,
@@ -79,20 +83,32 @@ SECTIONS['reading'] = {
 
 SECTIONS['power-spectral-density'] = {
     'projections': {
-        'default: None',
+        'default': None,
         'type': str,
         'help': "Location with corrected projections"},
+    'retrieval-padded-width': {
+        'default': 0,
+        'type': positive_int,
+        'help': "Padded width used for phase retrieval"},
+    'retrieval-padded-height': {
+        'default': 0,
+        'type': positive_int,
+        'help': "Padded height used for phase retrieval"},
+    'retrieval-padding-mode': {
+        'choices': ['none', 'clamp', 'clamp_to_edge', 'repeat'],
+        'default': 'clamp_to_edge',
+        'help': "Padded values assignment"},
+}
+
+SECTIONS['analyze'] = {
     'power-spectral-density': {
         'default': 'psd.tif',
         'type': str,
         'help': "Path to location or format-specified file path "
-                "for storing a power spectral density image.",
-        'metavar': 'PATH'}
-}
-
-SECTIONS['retrieve-phase'] = {
+                "of a power spectral density image.",
+        'metavar': 'PATH'},
     'retrieval-method': {
-        'coices': ['tie', 'ctf', 'ctfhalfsin', 'qp', 'qphalfsine', 'qp2'],
+        'choices': ['tie', 'ctf', 'ctfhalfsin', 'qp', 'qphalfsine', 'qp2'],
         'default': 'qp',
         'help': 'Phase retrieval method.'},
     'energy' : {
@@ -111,18 +127,6 @@ SECTIONS['retrieve-phase'] = {
         'default': 2,
         'type': float,
         'help': "Regularization rate (typical values between [2,3])"},
-    'retrieval-padded-width': {
-        'default': 0,
-        'type': positive_int,
-        'help': "Padded width used for phase retrieval"},
-    'retrieval-padded-height': {
-        'default': 0,
-        'type': positive_int,
-        'help': "Padded height used for phase retrieval"},
-    'retrieval-padding-mode': {
-        'coices': ['none', 'clamp', 'clamp_to_edge', 'repeat'],
-        'default': 'clamp_to_edge',
-        'help': "Padded values assignment"},
     'thresholding-rate': {
         'default': 0.001,
         'type': float,
