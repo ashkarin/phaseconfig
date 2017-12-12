@@ -1,0 +1,86 @@
+#!/usr/bin/env python
+
+import os
+import sys
+import argparse
+import logging
+import gi
+from phaseconfig import phase, config, __version__
+
+gi.require_version('Ufo', '0.0')
+LOG = logging.getLogger('phaseconfig')
+
+
+def init(args):
+    if not os.path.exists(args.config):
+        config.write(args.config)
+    else:
+        raise RuntimeError("{0} already exists".format(args.config))
+
+
+def run_analyze(args):
+    from phaseconfig import phase
+    phase.analyze(args)
+
+
+def run_psd():
+    from phaseconfig import phase
+    phase.compute_phase_spectrum_density(args)
+
+
+def gui(args):
+    try:
+        from phaseconfig import gui
+        gui.main(args)
+    except ImportError as e:
+        LOG.error(str(e))
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--config', **config.SECTIONS['general']['config'])
+    parser.add_argument('--version', action='version',
+                        version='%(prog)s {}'.format(__version__))
+
+    analyze_params = ('retrieve-phase')
+    psd_params = ('power-spectral-density')
+    gui_params = ('retrieve-phase', 'power-spectral-density')
+
+    cmd_parsers = [
+        ('analyze', run_analyze, analyze_params, "Analzse the phase retrieval filter"),
+        ('psd',     run_psd,     psd_params, "Generate power spectrum density from projections"),
+        ('gui',     gui,         gui_params, "GUI for analysis of the phase retrieval filter"),
+    ]
+
+    subparsers = parser.add_subparsers(title="Commands", metavar='')
+
+    for cmd, func, sections, text in cmd_parsers:
+        cmd_params = config.Params(sections=sections)
+        cmd_parser = subparsers.add_parser(cmd, help=text, formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+        cmd_parser = cmd_params.add_arguments(cmd_parser)
+        cmd_parser.set_defaults(_func=func)
+
+    args = config.parse_known_args(parser, subparser=True)
+
+    log_level = logging.DEBUG if args.verbose else logging.INFO
+    LOG.setLevel(log_level)
+
+    stream_handler = logging.StreamHandler(sys.stdout)
+    stream_handler.setFormatter(logging.Formatter('%(levelname)s: %(message)s'))
+    LOG.addHandler(stream_handler)
+
+    if args.log:
+        file_handler = logging.FileHandler(args.log)
+        file_handler.setFormatter(logging.Formatter('%(name)s:%(levelname)s: %(message)s'))
+        LOG.addHandler(file_handler)
+
+    try:
+        config.log_values(args)
+        args._func(args)
+    except RuntimeError as e:
+        LOG.error(str(e))
+        sys.exit(1)
+
+
+if __name__ == "__main__":
+    main()
