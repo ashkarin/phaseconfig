@@ -222,7 +222,7 @@ def compute_phase_spectrum_density(args):
     return duration
 
 def generate_filter(args):
-    if params.output is None:
+    if args.output is None:
         raise RuntimeError("You must specify --output")
     filter_img = compute_filter(args)
     import tifffile
