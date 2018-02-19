@@ -226,4 +226,4 @@ def generate_filter(args):
         raise RuntimeError("You must specify --output")
     filter_img = compute_filter(args)
     import tifffile
-    tifffile.imsave(args.output, filter_img)
+    tifffile.imsave(args.output, filter_img.astype(np.float32))
