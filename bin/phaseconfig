@@ -27,6 +27,10 @@ def run_psd(args):
     from phaseconfig import phase
     phase.compute_phase_spectrum_density(args)
 
+def run_filter(args):
+    from phaseconfig import phase
+    phase.generate_filter(args)
+
 
 def gui(args):
     try:
@@ -49,7 +53,7 @@ def main():
     cmd_parsers = [
         ('analyze', run_analyze, analyze_params, "Analzse the phase retrieval filter"),
         ('psd',     run_psd,     psd_params, "Generate power spectrum density from projections"),
-        ('gui',     gui,         gui_params, "GUI for analysis of the phase retrieval filter"),
+        ('filter',  run_filter,  psd_params, "Generate the phase retrieval filter"),
     ]
 
     subparsers = parser.add_subparsers(title="Commands", metavar='')

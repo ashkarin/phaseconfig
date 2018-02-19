@@ -220,3 +220,10 @@ def compute_phase_spectrum_density(args):
     duration = scheduler.props.time
 
     return duration
+
+def generate_filter(args):
+    if params.output is None:
+        raise RuntimeError("You must specify --output")
+    filter_img = compute_filter(args)
+    import tifffile
+    filter_img.imsave(args.output)
