@@ -53,7 +53,7 @@ def main():
     cmd_parsers = [
         ('analyze', run_analyze, analyze_params, "Analzse the phase retrieval filter"),
         ('psd',     run_psd,     psd_params, "Generate power spectrum density from projections"),
-        ('filter',  run_filter,  psd_params, "Generate the phase retrieval filter"),
+        ('filter',  run_filter,  analyze_params, "Generate the phase retrieval filter"),
     ]
 
     subparsers = parser.add_subparsers(title="Commands", metavar='')
